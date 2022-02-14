@@ -24,6 +24,9 @@ class Constant():
         self.value = value
         self.unit = unit
 
+    def __repr__(self):
+        return f"{self.value}{self.unit}"
+
 
 speed_of_light = Constant('speed of light in vacuo', '𝑐', 3.00 * 10 ** 8, 'ms^-1')
 permeability_of_free_space = Constant('permeability of free space', '𝜇', 4 * math.pi * 10 ** -7,
@@ -66,29 +69,29 @@ SPHERE_COUNT = 1
 GRAV_VECTOR = vector(0, -1 * gravitational_field_strength.value, 0)
 # pi = 2 * asin(1.0)
 
-big_sphere = None
+BIG_SPHERE = None
 spheres = []
 
 scene = canvas(width=1200, height=500)
 scene.autoscale = True
 
 if SHOW_AXIS:
-    arr_len = 1.0
-    arr_x = arrow(pos=vector(0, 0, 0), axis=vector(arr_len, 0, 0), shaftwidth=arr_len / 20,
+    ARR_LEN = 1.0
+    arr_x = arrow(pos=vector(0, 0, 0), axis=vector(ARR_LEN, 0, 0), shaftwidth=ARR_LEN / 20,
                   color=color.red)
     arr_x_l = label(pos=arr_x.axis, text='x', xoffset=2)
 
-    arr_y = arrow(pos=vector(0, 0, 0), axis=vector(0, arr_len, 0), shaftwidth=arr_len / 20,
+    arr_y = arrow(pos=vector(0, 0, 0), axis=vector(0, ARR_LEN, 0), shaftwidth=ARR_LEN / 20,
                   color=color.green)
     arr_y_l = label(pos=arr_y.axis, text='y', xoffset=2)
 
-    arr_z = arrow(pos=vector(0, 0, 0), axis=vector(0, 0, arr_len), shaftwidth=arr_len / 20,
+    arr_z = arrow(pos=vector(0, 0, 0), axis=vector(0, 0, ARR_LEN), shaftwidth=ARR_LEN / 20,
                   color=color.blue)
     arr_z_l = label(pos=arr_z.axis, text='z', xoffset=2)
 
-big_sphere = sphere(pos=vector(0, BIG_SPHERE_RADIUS, 0), radius=BIG_SPHERE_RADIUS, shininess=0.1,
+BIG_SPHERE = sphere(pos=vector(0, BIG_SPHERE_RADIUS, 0), radius=BIG_SPHERE_RADIUS, shininess=0.1,
                     color=color.blue, opacity=0.2)
-print(f"Outer sphere: {big_sphere.pos}, radius: {big_sphere.radius}")
+print(f"Outer sphere: {BIG_SPHERE.pos}, radius: {BIG_SPHERE.radius}")
 
 pos_first = vector(RADIUS_DIFF, BIG_SPHERE_RADIUS, 0)
 
@@ -103,41 +106,51 @@ for index in range(SPHERE_COUNT):
     spheres.append(g)
 
 
-def correct_pos(g: sphere, outer_sphere: sphere):
-    pass
+def correct_pos(a_sphere: sphere, outer_sphere: sphere):
+    """
+    TODO
+    """
+    return a_sphere, outer_sphere
 
 
-def format_perc(p: float):
-    return format(p * 100, ".2f")
+def format_perc(percent: float):
+    """
+    TODO
+    """
+    return format(percent * 100, ".2f")
 
 
-def format_vector(v: vector):
-    return "[{},{},{}], mag: {}".format(format(v.x, '.2f'), format(v.y, '.2f'), format(v.z,
-                                                                                       '.2f'),
-                                        format(mag(v), '.2f'))
+def format_vector(vect: vector):
+    """
+    TODO
+    """
+    coord_x = format(vect.x, '.2f')
+    coord_y = format(vect.y, '.2f')
+    coord_z = format(vect.z, '.2f')
+    length = format(mag(vect), '.2f')
+    return f"[{coord_x}, {coord_y}, {coord_z}], mag: {length}"
 
 
-t = 0.0
-delta_t = 0.01
+time = 0.0
+DELTA_T = 0.01
 history = {}
 
-while t < 10:
+while time < 10:
     rate(10)
     for g in spheres:
-        tav = g.pos - big_sphere.pos
+        tav = g.pos - BIG_SPHERE.pos
         perc = format_perc(mag(tav) / RADIUS_DIFF)
         # https://i.stack.imgur.com/PIVYu.jpg
         # angle of the
         # radial force is zero.
         # tangential force
 
-        theta = tav.diff_angle(-big_sphere.pos)
+        theta = tav.diff_angle(-BIG_SPHERE.pos)
         theta_grad = theta * 180 / math.pi
         a = sin(theta) * gravitational_field_strength
+
         print(
-            "[{}] pos: {}[m], v:{}m/s {}%, g_eff={}".format(format(t, '.2f'), format_vector(g.pos),
-                                                            format_vector(g.v), perc,
-                                                            format(a, '.2f')))
+            f"[{format(time, '.2f')}] pos: {format_vector(g.pos)}[m], v:{format_vector(g.v)}m/s {perc}%, g_eff={format(a, '.2f')}")
 
         sin_t = sin(theta)
         cos_t = cos(theta)
@@ -148,18 +161,18 @@ while t < 10:
         force_eredo = force_grav + force_tens
         a_eredo = force_eredo / g.mass
         v_old = g.v
-        g.v += a_eredo * delta_t
+        g.v += a_eredo * DELTA_T
         print(f" v: {format_vector(v_old)} -> "
               f"{format_vector(g.v)}")
-        pos_new = g.pos + g.v * delta_t
-        tav_new = pos_new - big_sphere.pos
+        pos_new = g.pos + g.v * DELTA_T
+        tav_new = pos_new - BIG_SPHERE.pos
         if mag(tav_new) > RADIUS_DIFF:
             perc = format_perc(mag(tav_new) / RADIUS_DIFF)
             print(f" Correction needed: too far from center: {perc}%")
             #  mag(A) = A.mag   the magnitude of a vector
             #  hat(A) = A.hat   a unit vector in the direction of the vector
-            pos_new = big_sphere.pos + tav_new.hat * RADIUS_DIFF
-            angle_corr = math.pi / 2 - g.v.diff_angle(pos_new - big_sphere.pos)
+            pos_new = BIG_SPHERE.pos + tav_new.hat * RADIUS_DIFF
+            angle_corr = math.pi / 2 - g.v.diff_angle(pos_new - BIG_SPHERE.pos)
             angle_korr_grad = angle_corr * 180 / math.pi
             g.v = g.v.rotate(angle=angle_corr, axis=vector(0, 0, 1))
             print(f"  New position: {format_vector(pos_new)} ({format_vector(g.pos)})")
@@ -167,7 +180,6 @@ while t < 10:
             # time.sleep(0.5)
 
         g.pos = pos_new
-        if t - int(t) < 0.001:
-            history[t] = spheres
-        t = t + delta_t
-pass
+        if time - int(time) < 0.001:
+            history[time] = spheres
+        time = time + DELTA_T
