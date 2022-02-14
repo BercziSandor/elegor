@@ -1,2 +1,2 @@
-numpy==1.19.5
+numpy==1.21
 vpython~=7.6.2
