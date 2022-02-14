@@ -69,6 +69,7 @@ SPHERE_COUNT = 1
 GRAV_VECTOR = vector(0, -1 * gravitational_field_strength.value, 0)
 # pi = 2 * asin(1.0)
 
+
 BIG_SPHERE = None
 spheres = []
 
@@ -131,55 +132,64 @@ def format_vector(vect: vector):
     return f"[{coord_x}, {coord_y}, {coord_z}], mag: {length}"
 
 
-time = 0.0
-DELTA_T = 0.01
-history = {}
+def main():
+    """
+    TODO
+    """
+    time = 0.0
+    delta_t = 0.01
+    history = {}
 
-while time < 10:
-    rate(10)
-    for g in spheres:
-        tav = g.pos - BIG_SPHERE.pos
-        perc = format_perc(mag(tav) / RADIUS_DIFF)
-        # https://i.stack.imgur.com/PIVYu.jpg
-        # angle of the
-        # radial force is zero.
-        # tangential force
+    while time < 10:
+        rate(10)
+        for a_sphere in spheres:
+            tav = a_sphere.pos - BIG_SPHERE.pos
+            perc = format_perc(mag(tav) / RADIUS_DIFF)
+            # https://i.stack.imgur.com/PIVYu.jpg
+            # angle of the
+            # radial force is zero.
+            # tangential force
 
-        theta = tav.diff_angle(-BIG_SPHERE.pos)
-        theta_grad = theta * 180 / math.pi
-        a = sin(theta) * gravitational_field_strength
+            theta = tav.diff_angle(-BIG_SPHERE.pos)
+            # theta_grad = theta * 180 / math.pi
+            acceleration = sin(theta) * gravitational_field_strength
 
-        print(
-            f"[{format(time, '.2f')}] pos: {format_vector(g.pos)}[m], v:{format_vector(g.v)}m/s {perc}%, g_eff={format(a, '.2f')}")
+            print(
+                f"[{format(time, '.2f')}] pos: {format_vector(a_sphere.pos)}[m], "
+                f"v:{format_vector(a_sphere.v)}m/s {perc}%, g_eff={format(acceleration, '.2f')}")
 
-        sin_t = sin(theta)
-        cos_t = cos(theta)
-        force_grav = GRAV_VECTOR
-        force_per = tav.hat * cos(theta)
-        force_tens = - force_per
+            # sin_t = sin(theta)
+            # cos_t = cos(theta)
+            force_grav = GRAV_VECTOR
+            force_per = tav.hat * cos(theta)
+            force_tens = - force_per
 
-        force_eredo = force_grav + force_tens
-        a_eredo = force_eredo / g.mass
-        v_old = g.v
-        g.v += a_eredo * DELTA_T
-        print(f" v: {format_vector(v_old)} -> "
-              f"{format_vector(g.v)}")
-        pos_new = g.pos + g.v * DELTA_T
-        tav_new = pos_new - BIG_SPHERE.pos
-        if mag(tav_new) > RADIUS_DIFF:
-            perc = format_perc(mag(tav_new) / RADIUS_DIFF)
-            print(f" Correction needed: too far from center: {perc}%")
-            #  mag(A) = A.mag   the magnitude of a vector
-            #  hat(A) = A.hat   a unit vector in the direction of the vector
-            pos_new = BIG_SPHERE.pos + tav_new.hat * RADIUS_DIFF
-            angle_corr = math.pi / 2 - g.v.diff_angle(pos_new - BIG_SPHERE.pos)
-            angle_korr_grad = angle_corr * 180 / math.pi
-            g.v = g.v.rotate(angle=angle_corr, axis=vector(0, 0, 1))
-            print(f"  New position: {format_vector(pos_new)} ({format_vector(g.pos)})")
-            # V correction
-            # time.sleep(0.5)
+            force_eredo = force_grav + force_tens
+            a_eredo = force_eredo / a_sphere.mass
+            v_old = a_sphere.v
+            a_sphere.v += a_eredo * delta_t
+            print(f" v: {format_vector(v_old)} -> "
+                  f"{format_vector(a_sphere.v)}")
+            pos_new = a_sphere.pos + a_sphere.v * delta_t
+            tav_new = pos_new - BIG_SPHERE.pos
+            if mag(tav_new) > RADIUS_DIFF:
+                perc = format_perc(mag(tav_new) / RADIUS_DIFF)
+                print(f" Correction needed: too far from center: {perc}%")
+                #  mag(A) = A.mag   the magnitude of a vector
+                #  hat(A) = A.hat   a unit vector in the direction of the vector
+                pos_new = BIG_SPHERE.pos + tav_new.hat * RADIUS_DIFF
+                angle_corr = math.pi / 2 - a_sphere.v.diff_angle(pos_new - BIG_SPHERE.pos)
+                # angle_korr_grad = angle_corr * 180 / math.pi
+                a_sphere.v = a_sphere.v.rotate(angle=angle_corr, axis=vector(0, 0, 1))
+                print(f"  New position: {format_vector(pos_new)} ({format_vector(a_sphere.pos)})")
+                # V correction
+                # time.sleep(0.5)
 
-        g.pos = pos_new
-        if time - int(time) < 0.001:
-            history[time] = spheres
-        time = time + DELTA_T
+            a_sphere.pos = pos_new
+            if time - int(time) < 0.001:
+                history[time] = spheres
+            time = time + delta_t
+
+
+if __name__ == '__main__':
+    main()
