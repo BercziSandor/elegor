@@ -75,13 +75,11 @@ def test():
     v1v2: Point = v2 - v1
     print(f"{v2} - {v1}: {v1v2}")
 
-    v=v1v2.conjugate()
+    v = v1v2.conjugate()
     # v=v1v2.
-    v=v1v2.mean()
+    v = v1v2.mean()
 
-    v=v1v2.conjugate()
-
-
+    v = v1v2.conjugate()
 
     v1 = Point([1, 2, 3])
     v2 = Point([4, 5, 7])
