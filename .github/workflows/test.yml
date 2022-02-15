@@ -1,3 +1,6 @@
+# https://docs.github.com/en/actions
+# https://docs.github.com/en/actions/migrating-to-github-actions/migrating-from-gitlab-cicd-to-github-actions
+
 name: Test
 
 on: [push]
@@ -52,10 +55,9 @@ jobs:
         FLAKE_IGNORE="--ignore E501,E501"
         FLAKE_OPTIONS+=" $FLAKE_IGNORE"
         echo asdf3
-        # flake8 --output-file=test-reports/flake8/flake8.txt $FLAKE_OPTIONS $(ls *.py)
-        flake8 --verbose $FLAKE_OPTIONS $(ls *.py)
+        flake8 --tee --output-file=test-reports/flake8/flake8.txt $FLAKE_OPTIONS $(ls *.py)
         echo asdf4
-        flake8_junit         test-reports/flake8/flake8.txt   test-reports/flake8/flake8_junit.xml
+        flake8_junit               test-reports/flake8/flake8.txt test-reports/flake8/flake8_junit.xml
         echo asdf5
 
     - name: Safety - Vulnerabilities checking
