@@ -48,13 +48,11 @@ jobs:
       # https://pylint.org/
       - name: Pylint - Code analysis
         run: |
-#          pip install pylint
           pylint --fail-under=8 $(ls *.py) 
 
       # http://mypy-lang.org/
       - name: Mypy - Static type checker
         run: |
-#          pip install mypy
           python -m mypy --ignore-missing-imports $(ls *.py) 
 
       #    - name: Setuptools test
@@ -65,7 +63,6 @@ jobs:
       # https://flake8.pycqa.org/en/latest/user/invocation.html
       - name: Flake8 - Style Guide Enforcement
         run: |
-#          pip install flake8 flake8-junit-report
           mkdir -p test-reports/flake8 || true
           FLAKE_OPTIONS="--max-line-length=120 --max-complexity 8"
           FLAKE_IGNORE="--ignore E501,E501"
@@ -76,7 +73,6 @@ jobs:
       # https://github.com/pyupio/safety
       - name: Safety - Vulnerabilities checking
         run: |
-#          pip install safety
           # numpy would fail: https://github.com/pyupio/safety-db/issues/2349
           safety check --full-report --ignore=44715
       #        safety check -r requirements.txt --full-report
@@ -88,7 +84,6 @@ jobs:
       # https://docs.pytest.org/
       - name: Pytest - Python testing tool that helps you write better programs
         run: |
-#          pip install pytest
           pytest
 
 #      - name: Pytest Coverage
