@@ -111,7 +111,7 @@ jobs:
       - name: Archive test reports
         uses: actions/upload-artifact@v2
         with:
-          name: test-reports
+          name: test-reports_${{ matrix.os }}-python-${{ matrix.python-version }}
           path: test-reports/**/*.*
 
       - name: Archive requirements
