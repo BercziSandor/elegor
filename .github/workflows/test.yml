@@ -111,11 +111,11 @@ jobs:
       - name: Archive test reports
         uses: actions/upload-artifact@v2
         with:
-          name: elegor_${{ matrix.os }}-python-${{ matrix.python-version }}_test-reports
+          name: elegor_${{ matrix.os }}-python-${{ matrix.python-version }}_test-reports_$(git log -1 --format='%H')
           path: test-reports/**/*.*
 
       - name: Archive requirements
         uses: actions/upload-artifact@v2
         with:
-          name: elegor_${{ matrix.os }}-python-${{ matrix.python-version }}_requirements
+          name: elegor_${{ matrix.os }}-python-${{ matrix.python-version }}_requirements_$(git log -1 --format='%H')
           path: requirements*.txt
