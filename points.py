@@ -73,13 +73,14 @@ def test():
     v2: Point = Point([2, 3])
     d = v1.dist(v2)
     v1v2: Point = v2 - v1
-    print(f"{v2} - {v1}: {v1v2}")
+    print(f"{v2} - {v1}: {v1v2}, {d}")
 
     v = v1v2.conjugate()
     # v=v1v2.
     v = v1v2.mean()
 
     v = v1v2.conjugate()
+    print(f"conj: {v}")
 
     v1 = Point([1, 2, 3])
     v2 = Point([4, 5, 7])
