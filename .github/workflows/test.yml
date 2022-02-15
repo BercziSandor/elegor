@@ -60,10 +60,13 @@ jobs:
         flake8_junit               test-reports/flake8/flake8.txt test-reports/flake8/flake8_junit.xml
         echo asdf5
 
+    # https://github.com/pyupio/safety
     - name: Safety - Vulnerabilities checking
       run: |
         pip install safety
-        safety check
+        # numpy would fail: https://github.com/pyupio/safety-db/issues/2349
+        safety check --full-report --ignore=44715
+#        safety check -r requirements.txt --full-report
 
     - name: Unittest
       run: |
