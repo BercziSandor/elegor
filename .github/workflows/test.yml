@@ -6,7 +6,7 @@ name: Test
 on: [ push ]
 
 env:
-  FILES_TO_CHECK: $(ls *.py)
+  FILES_TO_CHECK: 'elegor.py points.py'
 
 jobs:
   test:
