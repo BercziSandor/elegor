@@ -24,7 +24,7 @@ jobs:
           cache-name: cache-python
         with:
           path: |
-            $pythonLocation
+            venv
             ~/.cache/pip
           key: ${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('requirements-dev.txt') }}
           restore-keys: |
@@ -38,9 +38,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          set
-          env
           python -m pip install --upgrade pip
+          python -V
+          python -m pip install virtualenv
+          if [ ! -e venv ]; then virtualenv venv; fi
+          source venv/bin/activate
           python -m pip install --upgrade --upgrade-strategy eager -r requirements.txt
           python -m pip install --upgrade --upgrade-strategy eager -r requirements-dev.txt
           python -m pip freeze
