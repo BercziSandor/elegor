@@ -42,9 +42,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pip-tools
           pip-compile requirements.in
-          cat requirements.txt
           pip-compile requirements-dev.in
-          cat requirements-dev.txt
           python -V
           python -m pip install virtualenv
           if [ ! -e venv ]; then virtualenv venv; fi
@@ -53,7 +51,7 @@ jobs:
           python -m pip install --upgrade --upgrade-strategy eager -r requirements-dev.txt
           python -m pip freeze > requirements_freeze.txt
           mkdir -p test-reports/{pylint,flake8,safety,mypy} || true
-          env
+          env | sort
 
       # https://pylint.org/
       - name: Pylint - Code analysis
