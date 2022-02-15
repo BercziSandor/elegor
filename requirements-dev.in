@@ -1,5 +1,6 @@
 wheel
 setuptools
+pip-tools
 pylint
 mypy
 flake8
