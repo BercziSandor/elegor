@@ -54,6 +54,7 @@ jobs:
           python -m pip install --upgrade --upgrade-strategy eager -r requirements-dev.txt
           python -m pip freeze
           mkdir -p test-reports/{pylint,flake8,safety,mypy} || true
+          env
 
       # https://pylint.org/
       - name: Pylint - Code analysis
@@ -111,7 +112,7 @@ jobs:
       - name: Archive test reports
         uses: actions/upload-artifact@v2
         with:
-          name: test-reports_${{ matrix.os }}-python-${{ matrix.python-version }}
+          name: elegor_test-reports_${{ matrix.os }}-python-${{ matrix.python-version }}
           path: test-reports/**/*.*
 
       - name: Archive requirements
