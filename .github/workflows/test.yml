@@ -7,7 +7,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+#        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ubuntu-latest]
         python-version: ["3.8", "3.9", "3.10"]
     steps:
     - uses: actions/checkout@v2
@@ -43,7 +44,7 @@ jobs:
     - name: Flake8 - Style Guide Enforcement
       run: |
         pip install flake8 flake8-junit-report
-        mkdir -p test-reports/flake8
+        mkdir -p test-reports/flake8 || true
         FLAKE_OPTIONS="--max-line-length=120 --max-complexity 8"
         FLAKE_IGNORE="--ignore E501,E501"
         FLAKE_OPTIONS+=" $FLAKE_IGNORE"
