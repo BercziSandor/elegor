@@ -21,6 +21,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install wheel setuptools # additional generic packages for testing
 
     # https://pylint.org/
     - name: Pylint - Code analysis
