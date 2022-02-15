@@ -53,18 +53,20 @@ jobs:
           python -m pip install --upgrade --upgrade-strategy eager -r requirements.txt
           python -m pip install --upgrade --upgrade-strategy eager -r requirements-dev.txt
           python -m pip freeze
+          mkdir -p test-reports || true
 
       # https://pylint.org/
       - name: Pylint - Code analysis
         run: |
           source venv/bin/activate
-          pylint --fail-under=8 $FILES_TO_CHECK 
+          pylint --output-format=json:test-reports/pylint/pylint.json,colorized --fail-under=8 $FILES_TO_CHECK
 
       # http://mypy-lang.org/
+      # https://mypy.readthedocs.io/en/stable/command_line.html
       - name: Mypy - Static type checker
         run: |
           source venv/bin/activate
-          python -m mypy --ignore-missing-imports $FILES_TO_CHECK 
+          python -m mypy --pretty --ignore-missing-imports $FILES_TO_CHECK 
 
       #    - name: Setuptools test
       #      run: |
@@ -104,5 +106,11 @@ jobs:
 #        run: |
 #          source venv/bin/activate
 #          pytest --cov-report term-missing --cov=${src_dir}
+
+      - name: Archive test reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-reports
+          path: test-reports/**/*.*
 
 
