@@ -24,7 +24,7 @@ jobs:
           cache-name: cache-python
         with:
 #          path: ~/.cache/pip
-          path: ${{ env.pythonLocation }}
+          path: $pythonLocation
           key: ${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('requirements-dev.txt') }}
 
       - name: Set up Python ${{ matrix.python-version }}
