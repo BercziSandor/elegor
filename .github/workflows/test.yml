@@ -50,11 +50,13 @@ jobs:
       # https://pylint.org/
       - name: Pylint - Code analysis
         run: |
+          source venv/bin/activate
           pylint --fail-under=8 $(ls *.py) 
 
       # http://mypy-lang.org/
       - name: Mypy - Static type checker
         run: |
+          source venv/bin/activate
           python -m mypy --ignore-missing-imports $(ls *.py) 
 
       #    - name: Setuptools test
@@ -65,6 +67,7 @@ jobs:
       # https://flake8.pycqa.org/en/latest/user/invocation.html
       - name: Flake8 - Style Guide Enforcement
         run: |
+          source venv/bin/activate
           mkdir -p test-reports/flake8 || true
           FLAKE_OPTIONS="--max-line-length=120 --max-complexity 8"
           FLAKE_IGNORE="--ignore E501,E501"
@@ -75,22 +78,25 @@ jobs:
       # https://github.com/pyupio/safety
       - name: Safety - Vulnerabilities checking
         run: |
+          source venv/bin/activate
           # numpy would fail: https://github.com/pyupio/safety-db/issues/2349
           safety check --full-report --ignore=44715
       #        safety check -r requirements.txt --full-report
 
       - name: Unittest
         run: |
+          source venv/bin/activate
           python -m unittest
 
       # https://docs.pytest.org/
       - name: Pytest - Python testing tool that helps you write better programs
         run: |
+          source venv/bin/activate
           pytest
 
 #      - name: Pytest Coverage
 #        run: |
-#          pip install pytest pytest-cov
+#          source venv/bin/activate
 #          pytest --cov-report term-missing --cov=${src_dir}
 
 
