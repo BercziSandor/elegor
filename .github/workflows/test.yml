@@ -36,7 +36,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install --upgrade --upgrade-strategy eager -r requirements.txt
           python -m pip install --upgrade --upgrade-strategy eager -r requirements-dev.txt
-          python -m pip -m pip freeze
+          python -m pip freeze
 
       # https://pylint.org/
       - name: Pylint - Code analysis
