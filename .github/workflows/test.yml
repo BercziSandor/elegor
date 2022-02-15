@@ -114,4 +114,8 @@ jobs:
           name: test-reports
           path: test-reports/**/*.*
 
-
+      - name: Archive requirements
+        uses: actions/upload-artifact@v2
+        with:
+          name: requirements_${{ matrix.os }}-python-${{ matrix.python-version }}
+          path: requirements*.txt
