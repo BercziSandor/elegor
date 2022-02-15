@@ -52,7 +52,7 @@ jobs:
           source venv/bin/activate
           python -m pip install --upgrade --upgrade-strategy eager -r requirements.txt
           python -m pip install --upgrade --upgrade-strategy eager -r requirements-dev.txt
-          python -m pip freeze
+          python -m pip freeze > requirements_freeze.txt
           mkdir -p test-reports/{pylint,flake8,safety,mypy} || true
           env
 
@@ -112,11 +112,11 @@ jobs:
       - name: Archive test reports
         uses: actions/upload-artifact@v2
         with:
-          name: elegor_test-reports_${{ matrix.os }}-python-${{ matrix.python-version }}
+          name: elegor_${{ matrix.os }}-python-${{ matrix.python-version }}_test-reports
           path: test-reports/**/*.*
 
       - name: Archive requirements
         uses: actions/upload-artifact@v2
         with:
-          name: requirements_${{ matrix.os }}-python-${{ matrix.python-version }}
+          name: elegor_${{ matrix.os }}-python-${{ matrix.python-version }}_requirements
           path: requirements*.txt
