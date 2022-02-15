@@ -53,12 +53,12 @@ jobs:
           mkdir -p test-reports/{pylint,flake8,safety,mypy} || true
           # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
           echo "git_commit_id=$(git log -1 --format='%h')" >> $GITHUB_ENV
+          echo "project_name=Elegor" >> $GITHUB_ENV
           env | sort
 
       # https://pylint.org/
       - name: Pylint - Code analysis
         run: |
-          echo "xcommit_id: ${{ env.git_commit_id }}"
           mkdir -p test-reports/pylint || true
           source venv/bin/activate
           pylint --output-format=json:test-reports/pylint/pylint.json,colorized --fail-under=8 $FILES_TO_CHECK
@@ -112,11 +112,11 @@ jobs:
       - name: Archive test reports
         uses: actions/upload-artifact@v2
         with:
-          name: elegor_${{ matrix.os }}-python-${{ matrix.python-version }}_test-reports_$(git log -1 --format='%h')
+          name: ${{ env.project_name }}_${{ env.git_commit_id }}_${{ matrix.os }}_python-${{ matrix.python-version }}_test-reports
           path: test-reports/**/*.*
 
       - name: Archive requirements
         uses: actions/upload-artifact@v2
         with:
-          name: elegor_${{ matrix.os }}-python-${{ matrix.python-version }}_requirements_$(git log -1 --format='%h')
+          name: ${{ env.project_name }}_${{ env.git_commit_id }}_${{ matrix.os }}_python-${{ matrix.python-version }}_requirements
           path: requirements*.txt
