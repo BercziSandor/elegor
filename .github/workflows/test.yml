@@ -3,79 +3,89 @@
 
 name: Test
 
-on: [push]
+on: [ push ]
 
 jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-#        os: [ubuntu-latest, windows-latest, macOS-latest]
-        os: [ubuntu-latest]
-        python-version: ["3.8", "3.9", "3.10"]
+        #        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ ubuntu-latest ]
+        python-version: [ "3.8", "3.9", "3.10" ]
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
+      # https://blog.allenai.org/python-caching-in-github-actions-e9452698e98d
+      - name: Cache packages
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-pip-packages
+        with:
+          path: ~/.cache/pip
+          key: ${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('requirements-dev.txt') }}
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install wheel setuptools # additional generic packages for testing
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    # https://pylint.org/
-    - name: Pylint - Code analysis
-      run: |
-        pip install pylint
-        pylint --fail-under=8 $(ls *.py) 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --upgrade --upgrade-strategy eager -r requirements.txt
+          python -m pip install --upgrade --upgrade-strategy eager -r requirements-dev.txt
+          python -m pip -m pip freeze
 
-    # http://mypy-lang.org/
-    - name: Mypy - Static type checker
-      run: |
-        pip install mypy
-        python -m mypy --ignore-missing-imports $(ls *.py) 
+      # https://pylint.org/
+      - name: Pylint - Code analysis
+        run: |
+          pip install pylint
+          pylint --fail-under=8 $(ls *.py) 
 
-#    - name: Setuptools test
-#      run: |
-#        python setup.py test
+      # http://mypy-lang.org/
+      - name: Mypy - Static type checker
+        run: |
+          pip install mypy
+          python -m mypy --ignore-missing-imports $(ls *.py) 
 
-    # https://flake8.pycqa.org/en/latest/
-    # https://flake8.pycqa.org/en/latest/user/invocation.html
-    - name: Flake8 - Style Guide Enforcement
-      run: |
-        pip install flake8 flake8-junit-report
-        mkdir -p test-reports/flake8 || true
-        FLAKE_OPTIONS="--max-line-length=120 --max-complexity 8"
-        FLAKE_IGNORE="--ignore E501,E501"
-        FLAKE_OPTIONS+=" $FLAKE_IGNORE"
-        flake8 --tee --output-file=test-reports/flake8/flake8.txt $FLAKE_OPTIONS $(ls *.py)
-        flake8_junit               test-reports/flake8/flake8.txt test-reports/flake8/flake8_junit.xml
+      #    - name: Setuptools test
+      #      run: |
+      #        python setup.py test
 
-    # https://github.com/pyupio/safety
-    - name: Safety - Vulnerabilities checking
-      run: |
-        pip install safety
-        # numpy would fail: https://github.com/pyupio/safety-db/issues/2349
-        safety check --full-report --ignore=44715
-#        safety check -r requirements.txt --full-report
+      # https://flake8.pycqa.org/en/latest/
+      # https://flake8.pycqa.org/en/latest/user/invocation.html
+      - name: Flake8 - Style Guide Enforcement
+        run: |
+          pip install flake8 flake8-junit-report
+          mkdir -p test-reports/flake8 || true
+          FLAKE_OPTIONS="--max-line-length=120 --max-complexity 8"
+          FLAKE_IGNORE="--ignore E501,E501"
+          FLAKE_OPTIONS+=" $FLAKE_IGNORE"
+          flake8 --tee --output-file=test-reports/flake8/flake8.txt $FLAKE_OPTIONS $(ls *.py)
+          flake8_junit               test-reports/flake8/flake8.txt test-reports/flake8/flake8_junit.xml
 
-    - name: Unittest
-      run: |
-        python -m unittest
+      # https://github.com/pyupio/safety
+      - name: Safety - Vulnerabilities checking
+        run: |
+          pip install safety
+          # numpy would fail: https://github.com/pyupio/safety-db/issues/2349
+          safety check --full-report --ignore=44715
+      #        safety check -r requirements.txt --full-report
 
-    # https://docs.pytest.org/
-    - name: Pytest - Python testing tool that helps you write better programs
-      run: |
-        pip install pytest
-        pytest
+      - name: Unittest
+        run: |
+          python -m unittest
 
-    - name: Pytest Coverage
-      run: |
-        pip install pytest pytest-cov
-        pytest --cov-report term-missing --cov=${src_dir}
+      # https://docs.pytest.org/
+      - name: Pytest - Python testing tool that helps you write better programs
+        run: |
+          pip install pytest
+          pytest
+
+      - name: Pytest Coverage
+        run: |
+          pip install pytest pytest-cov
+          pytest --cov-report term-missing --cov=${src_dir}
 
 

@@ -1,0 +1,9 @@
+wheel
+setuptools
+pylint
+mypy
+flake8
+flake8-junit-report
+safety
+pytest
+pytest-cov
