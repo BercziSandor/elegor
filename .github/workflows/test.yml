@@ -23,9 +23,9 @@ jobs:
         env:
           cache-name: cache-python
         with:
-          path: ${{ env.pythonLocation }}
+           path: ~/.cache/pip
+#          path: ${{ env.pythonLocation }}
           key: ${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('requirements-dev.txt') }}
-          # path: ~/.cache/pip
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -34,6 +34,8 @@ jobs:
 
       - name: Install dependencies
         run: |
+          set
+          env
           python -m pip install --upgrade pip
           python -m pip install --upgrade --upgrade-strategy eager -r requirements.txt
           python -m pip install --upgrade --upgrade-strategy eager -r requirements-dev.txt
