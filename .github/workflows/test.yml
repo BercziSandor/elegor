@@ -82,14 +82,14 @@ jobs:
           python -m unittest
 
       # https://docs.pytest.org/
-      - name: Pytest - Python testing tool that helps you write better programs
-        run: |
-          pip install pytest
-          pytest
+#      - name: Pytest - Python testing tool that helps you write better programs
+#        run: |
+#          pip install pytest
+#          pytest
 
-      - name: Pytest Coverage
-        run: |
-          pip install pytest pytest-cov
-          pytest --cov-report term-missing --cov=${src_dir}
+#      - name: Pytest Coverage
+#        run: |
+#          pip install pytest pytest-cov
+#          pytest --cov-report term-missing --cov=${src_dir}
 
 
