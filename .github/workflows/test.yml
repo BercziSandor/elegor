@@ -41,6 +41,7 @@ jobs:
 #        python setup.py test
 
     # https://flake8.pycqa.org/en/latest/
+    # https://flake8.pycqa.org/en/latest/user/invocation.html
     - name: Flake8 - Style Guide Enforcement
       run: |
         pip install flake8 flake8-junit-report
@@ -52,7 +53,7 @@ jobs:
         FLAKE_OPTIONS+=" $FLAKE_IGNORE"
         echo asdf3
         # flake8 --output-file=test-reports/flake8/flake8.txt $FLAKE_OPTIONS $(ls *.py)
-        flake8 $FLAKE_OPTIONS $(ls *.py)
+        flake8 --verbose $FLAKE_OPTIONS $(ls *.py)
         echo asdf4
         flake8_junit         test-reports/flake8/flake8.txt   test-reports/flake8/flake8_junit.xml
         echo asdf5
