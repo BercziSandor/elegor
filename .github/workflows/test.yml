@@ -5,6 +5,9 @@ name: Test
 
 on: [ push ]
 
+env:
+  FILES_TO_CHECK: $(ls *.py)
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
@@ -51,13 +54,13 @@ jobs:
       - name: Pylint - Code analysis
         run: |
           source venv/bin/activate
-          pylint --fail-under=8 $(ls *.py) 
+          pylint --fail-under=8 $FILES_TO_CHECK 
 
       # http://mypy-lang.org/
       - name: Mypy - Static type checker
         run: |
           source venv/bin/activate
-          python -m mypy --ignore-missing-imports $(ls *.py) 
+          python -m mypy --ignore-missing-imports $FILES_TO_CHECK 
 
       #    - name: Setuptools test
       #      run: |
@@ -72,7 +75,7 @@ jobs:
           FLAKE_OPTIONS="--max-line-length=120 --max-complexity 8"
           FLAKE_IGNORE="--ignore E501,E501"
           FLAKE_OPTIONS+=" $FLAKE_IGNORE"
-          flake8 --tee --output-file=test-reports/flake8/flake8.txt $FLAKE_OPTIONS $(ls *.py)
+          flake8 --tee --output-file=test-reports/flake8/flake8.txt $FLAKE_OPTIONS $FILES_TO_CHECK
           flake8_junit               test-reports/flake8/flake8.txt test-reports/flake8/flake8_junit.xml
 
       # https://github.com/pyupio/safety
@@ -81,7 +84,6 @@ jobs:
           source venv/bin/activate
           # numpy would fail: https://github.com/pyupio/safety-db/issues/2349
           safety check --full-report --ignore=44715
-      #        safety check -r requirements.txt --full-report
 
       - name: Unittest
         run: |
