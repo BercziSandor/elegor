@@ -21,9 +21,10 @@ jobs:
       - name: Cache packages
         uses: actions/cache@v2
         env:
-          cache-name: cache-pip-packages
+          cache-name: cache-python
         with:
-          path: ~/.cache/pip
+#          path: ~/.cache/pip
+          path: ${{ env.pythonLocation }}
           key: ${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('requirements-dev.txt') }}
 
       - name: Set up Python ${{ matrix.python-version }}
