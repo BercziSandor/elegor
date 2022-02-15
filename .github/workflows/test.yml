@@ -51,6 +51,9 @@ jobs:
           python -m pip install --upgrade --upgrade-strategy eager -r requirements-dev.txt
           python -m pip freeze > requirements_freeze.txt
           mkdir -p test-reports/{pylint,flake8,safety,mypy} || true
+          # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
+          echo "git_commit_id=$(git log -1 --format='%h')" >> $GITHUB_ENV
+          echo "xcommit_id: ${{ env.git_commit_id }}"
           env | sort
 
       # https://pylint.org/
@@ -109,11 +112,11 @@ jobs:
       - name: Archive test reports
         uses: actions/upload-artifact@v2
         with:
-          name: elegor_${{ matrix.os }}-python-${{ matrix.python-version }}_test-reports_$(git log -1 --format='%H')
+          name: elegor_${{ matrix.os }}-python-${{ matrix.python-version }}_test-reports_$(git log -1 --format='%h')
           path: test-reports/**/*.*
 
       - name: Archive requirements
         uses: actions/upload-artifact@v2
         with:
-          name: elegor_${{ matrix.os }}-python-${{ matrix.python-version }}_requirements_$(git log -1 --format='%H')
+          name: elegor_${{ matrix.os }}-python-${{ matrix.python-version }}_requirements_$(git log -1 --format='%h')
           path: requirements*.txt
